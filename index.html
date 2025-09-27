@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./assests/css/style.css"/>
+  <title>Quiz App</title>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Quiz App</h2>
+    <div id="question" class="question"></div>
+    <div id="options"></div>
+    <div class="btns">
+      <button id="next">Next</button>
+      <button id="restart" style="display:none">Restart</button>
+    </div>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        options: ["Hyperlinks and Text Markup Language", "Hyper Text Markup Language", "Home Tool Markup Language", "Hyper Tool Markup Language"],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        question: "Which CSS property is used to change the text color of an element?",
+        options: ["font-color", "color", "text-color", "style-color"],
+        answer: "color"
+      },
+      {
+        question: "What is the correct way to link a JavaScript file in HTML?",
+        options: ["<js src=scriptjs>", "<script link=script.js/script>", "<script src=script.js/script>", "<link rel=javascript href=script.js>"],
+        answer: "<script src=script.js/script>"
+      },
+      {
+        question: "Which of the following is a frontend framework?",
+        options: ["Django", "Laravel", "React", "Flask"],
+        answer: "React"
+      },
+      {
+        question: "What does responsive web design aim to do?",
+        options: ["Create static layouts for all devices", "Speed up server-side rendering", "Adapt the website layout to different screen sizes", "Make websites load faster using JavaScript"],
+        answer: "Adapt the website layout to different screen sizes"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next");
+    const restartBtn = document.getElementById("restart");
+    const scoreEl = document.getElementById("score");
+
+    function loadQuestions() {
+      const q = questions[currentIndex];
+      questionEl.innerText = q.question;
+      optionsEl.innerHTML = "";
+
+      q.options.forEach(option => {
+        const btn = document.createElement("div");
+        btn.innerText = option;
+        btn.classList.add("option");
+
+        btn.addEventListener("click", () => {
+          if (document.querySelector(".selected")) return;
+
+          btn.classList.add("selected");
+
+          if (option === q.answer) {
+            btn.classList.add("correct");
+            score++;
+          } else {
+            btn.classList.add("wrong");
+          }
+
+          // Show the correct one too
+          [...optionsEl.children].forEach(opt => {
+            if (opt.innerText === q.answer) {
+              opt.classList.add("correct");
+            }
+          });
+        });
+
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    // ✅ Fixed: changed `question` to `questions`
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestions();
+      } else {
+        showScore();
+      }
+    });
+
+    restartBtn.addEventListener("click", () => {
+      currentIndex = 0;
+      score = 0;
+      scoreEl.innerText = "";
+      nextBtn.style.display = "inline-block";
+      restartBtn.style.display = "none";
+      loadQuestions();
+    });
+
+    function showScore() {
+      questionEl.innerText = "Quiz Finished!";
+      optionsEl.innerHTML = "";
+      scoreEl.innerText = `Your Score: ${score} / ${questions.length}`;
+      nextBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
+    }
+
+    loadQuestions();
+  </script>
+</body>
+</html>
